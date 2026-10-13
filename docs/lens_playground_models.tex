@@ -1,0 +1,207 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=25mm]{geometry}
+\usepackage{amsmath,amssymb,bm}
+\usepackage{booktabs}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\setlist{nosep}
+\definecolor{accent}{RGB}{64,90,150}
+\newcommand{\vect}[1]{\bm{#1}}
+\newcommand{\be}{\boldsymbol{\beta}}
+\newcommand{\thv}{\boldsymbol{\theta}}
+\newcommand{\al}{\boldsymbol{\alpha}}
+\title{Mathematical and Physical Models Used in LensPlayground}
+\author{}
+\date{Version 2.0}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This note explains the physical models implemented in two interactive simulations of strong gravitational lensing. Playground 1 uses a circular singular isothermal sphere (SIS) with an extended S\'ersic source. Playground 2 uses the same drawing code but replaces the circular deflection with a singular isothermal ellipsoid (SIE) with external shear and has sliders for the axis ratios of lens and source. The lens and source are those of the simulated benchmark of EUCLID-SAGE, using lenstronomy 1.14 conventions, so the same lens and source give the same arcs and images as in the simulations. Angles are in arcseconds, and the Einstein radius follows from the velocity dispersion of the lens galaxy and the redshifts of lens and source.
+\end{abstract}
+
+\section{Common setup}
+The coordinate in the image plane is
+\begin{equation}
+  \thv=(x,y), \qquad r=\sqrt{x^2+y^2},
+\end{equation}
+and the centre of the unlensed source is
+\begin{equation}
+  \be_s=(\beta_{x,s},\beta_{y,s}).
+\end{equation}
+The lens equation is written in the standard form
+\begin{equation}
+  \be(\thv)=\thv-\al(\thv).
+\end{equation}
+For each sampled point in the image plane, the code maps that point back to the source plane and evaluates the source brightness there. Lensing conserves surface brightness: the image at $\thv$ receives the source brightness evaluated at $\be(\thv)$.
+
+Both playgrounds use angles in arcseconds. The displayed mass and distance controls are the velocity dispersion $\sigma_v$ of the lens galaxy (150--300\,km\,s$^{-1}$) and the redshifts of the lens, $z_L$ (0.1--1.2), and of the source, $z_S$ (at least $z_L+0.05$, up to 4). They set the Einstein radius of the isothermal lens,
+\begin{equation}
+  \theta_E=4\pi\left(\frac{\sigma_v}{c}\right)^2\frac{D_{LS}}{D_S},
+  \label{eq:thetaE}
+\end{equation}
+with angular-diameter distances $D_{LS}$ (lens to source) and $D_S$ (observer to source) in a flat $\Lambda$CDM universe with $H_0=70$\,km\,s$^{-1}$\,Mpc$^{-1}$ and $\Omega_m=0.3$. The pages also show the projected mass inside the Einstein radius,
+\begin{equation}
+  M_E=\frac{c^2}{4G}\,\theta_E^2\,\frac{D_L D_S}{D_{LS}} .
+\end{equation}
+The EUCLID-SAGE simulations draw $\theta_E$ directly, uniformly between $0.6''$ and $2.0''$; the slider ranges cover this interval.
+
+\section{Playground 1: circular lens}
+\subsection{Lens model}
+The first playground uses the SIS deflection
+\begin{equation}
+  \al(\thv)=\theta_E\frac{\thv}{|\thv|}.
+\end{equation}
+Hence
+\begin{align}
+  \beta_x &= x-\theta_E\frac{x}{r},\\
+  \beta_y &= y-\theta_E\frac{y}{r}.
+\end{align}
+The code evaluates it as the SIE of Playground 2 with axis ratio 1 and no shear. The singularity at $r=0$ is handled as in lenstronomy, with a core radius of $10^{-10}$ arcsec.
+
+Because the lens is circularly symmetric, rotating the source position about the origin rotates the images by the same angle. At fixed $|\be_s|$, the direction of the offset does not change the image configuration.
+
+\subsection{Source brightness model}
+The source is an extended elliptical S\'ersic profile, aligned with the axes, with half-light radius $R_S$ and S\'ersic index $n$ (lenstronomy \texttt{SERSIC\_ELLIPSE}),
+\begin{equation}
+ I(\be)\propto\exp\!\left[-b_n\left(\frac{R}{R_S}\right)^{1/n}\right],\qquad b_n=1.9992\,n-0.3271,
+ \label{eq:sourceq}
+\end{equation}
+where $R$ is the elliptical radius as defined in lenstronomy, the geometric mean of the distances along the major and minor axes of the source: for a source aligned with the axes and with axis ratio $q_S$,
+\begin{equation}
+ R^2=q_S\,(\beta_x-\beta_{x,s})^2+\frac{(\beta_y-\beta_{y,s})^2}{q_S}.
+\end{equation}
+The S\'ersic index is fixed at $n=1.5$ (the simulations draw $n$ between 1 and 2.5), and $R_S$ is a slider ($0.05''$--$0.6''$). The code renders points where $I$ exceeds 4\% of its central value, with brightness decreasing outward. In Playground 1 the source axis ratio is fixed at
+\begin{equation}
+ q_S=0.58.
+\end{equation}
+The source in Playground 1 is therefore elliptical; its axis ratio is not a slider.
+
+\subsection{Critical curve and caustic}
+For an SIS, the tangential critical curve is the Einstein ring, drawn dashed in the image plane,
+\begin{equation}
+ r=\theta_E,
+\end{equation}
+while its corresponding tangential caustic collapses to the origin in the source plane,
+\begin{equation}
+ \be=\vect{0}.
+\end{equation}
+The dashed circle in the inset of the source plane is therefore not the tangential caustic but the cut, $|\be|=\theta_E$: a source inside it has two images, a source outside it one.
+
+\section{Playground 2: elliptical lens and source}
+Playground 2 retains the coordinate system, source position, source size, sampling method, and mass and distance controls of Playground 1. It adds four parameters:
+\begin{equation}
+ q_L \quad\text{(lens axis ratio)},\qquad
+ \gamma_1,\gamma_2 \quad\text{(external shear)},\qquad
+ q_S \quad\text{(axis ratio of the source light)}.
+\end{equation}
+$q_L$ and the shear change the lens mapping; $q_S$ changes only the shape of the source.
+
+\subsection{Singular isothermal ellipsoid with external shear}
+The lens is lenstronomy's \texttt{SIE}, the lens of the EUCLID-SAGE simulations, with its major axis along $x$. Its surface mass density, in units of the critical density, is
+\begin{equation}
+ \boxed{\kappa(x,y)=\frac{b}{2\sqrt{q_L^2x^2+y^2}}},\qquad b=\theta_E\sqrt{q_L},
+ \label{eq:potential}
+\end{equation}
+where $\theta_E$ is lenstronomy's Einstein radius, the geometric mean of the Einstein radii along the major and minor axes, so $\theta_E$ keeps its meaning as $q_L$ changes. Define
+\begin{equation}
+ s=\sqrt{q_L^2x^2+y^2}.
+\end{equation}
+The deflection is~\cite{keeton1998}
+\begin{align}
+ \alpha_x &= \frac{b}{\sqrt{1-q_L^2}}\arctan\frac{\sqrt{1-q_L^2}\,x}{s},\\
+ \alpha_y &= \frac{b}{\sqrt{1-q_L^2}}\operatorname{artanh}\frac{\sqrt{1-q_L^2}\,y}{s}.
+\end{align}
+The external shear of the environment (lenstronomy \texttt{SHEAR}) adds
+\begin{equation}
+ \alpha_x^{\gamma}=\gamma_1x+\gamma_2y,\qquad \alpha_y^{\gamma}=\gamma_2x-\gamma_1y .
+\end{equation}
+The lens equation becomes
+\begin{align}
+ \boxed{\beta_x=x-\alpha_x-\alpha_x^{\gamma}},\\
+ \boxed{\beta_y=y-\alpha_y-\alpha_y^{\gamma}}.
+\end{align}
+The sliders set $q_L$ (0.4--1) and $\gamma_1,\gamma_2$ ($\pm0.1$); the simulations draw $\gamma_1,\gamma_2$ from a normal distribution with standard deviation 0.03. When $q_L=1$ and $\gamma_1=\gamma_2=0$, the mapping reduces exactly to the circular model used in Playground 1.
+
+\subsection{Source axis ratio}
+Equation~\eqref{eq:sourceq} is retained, but $q_S$ is now a slider. The interpretation is
+\begin{equation}
+ 0<q_S\leq 1,
+\end{equation}
+with $q_S=1$ corresponding to a circular source and smaller values to increasingly elongated sources. The source major/minor axes remain aligned with the coordinate axes; no orientation angle of the source is included in this version.
+
+\section{Critical curves and caustics in Playground 2}
+The lens mapping Jacobian is
+\begin{equation}
+ A=\frac{\partial\be}{\partial\thv}.
+\end{equation}
+Critical curves are the points of the image plane satisfying
+\begin{equation}
+ \boxed{\det A=0}.
+\end{equation}
+For the SIE with shear, the code computes $A$ from the deflection by central differences. Writing
+\begin{equation}
+ x=r\cos\phi,\qquad y=r\sin\phi,
+\end{equation}
+an isothermal lens has $\det A<0$ inside the tangential critical curve and $\det A>0$ outside, so along each of 240 directions $\phi$ the code finds the radius
+\begin{equation}
+ \boxed{r_{\rm crit}(\phi):\ \det A\big(r_{\rm crit}\cos\phi,\,r_{\rm crit}\sin\phi\big)=0}
+ \label{eq:rcrit}
+\end{equation}
+by bisection. The caustic is computed by mapping each point of Eq.~\eqref{eq:rcrit} through the lens equation,
+\begin{equation}
+ \be_{\rm caus}(\phi)=\be\!\left(\thv_{\rm crit}(\phi)\right),
+\end{equation}
+which produces the caustic drawn in the inset of the source plane. The dashed curve in the inset is the cut, the image of the lens centre in the source plane, $\be_{\rm cut}(\phi)=-\al(r\rightarrow0,\phi)$; a source outside it has no image near the lens centre. As $q_L\rightarrow1$ without shear, the caustic collapses to the circular SIS limit at the origin.
+
+\section{Physical and simplified parts of the model}
+\begin{center}
+\begin{tabular}{p{0.28\textwidth}p{0.31\textwidth}p{0.31\textwidth}}
+\toprule
+Feature & Model status & Comment \\
+\midrule
+Lens equation & Physical & Standard thin-lens mapping in arcseconds.\\
+Playground 1 lens & SIS & Circular isothermal deflection.\\
+Playground 2 lens & SIE with external shear & The lens of the EUCLID-SAGE simulations, lenstronomy conventions.\\
+Source profile & S\'ersic & As in the simulations; S\'ersic index fixed at 1.5.\\
+$\sigma_v,z_L,z_S\mapsto\theta_E$ & Physical & Isothermal lens in a flat $\Lambda$CDM universe.\\
+Critical curve & Mathematical & Computed from $\det A=0$ for the implemented lens.\\
+Caustic & Mathematical & Obtained by mapping the critical curve into the source plane.\\
+Pixel stars / foreground glow & Visual only & Decoration; not part of the lens equation.\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Parameters}
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Symbol & Meaning & Set by \\
+\midrule
+$\sigma_v$ & velocity dispersion of the lens galaxy & slider, km\,s$^{-1}$ \\
+$z_L$, $z_S$ & redshifts of lens and source & sliders \\
+$\theta_E$ & Einstein radius & from $\sigma_v$, $z_L$, $z_S$ (Eq.~\ref{eq:thetaE}) \\
+$\beta_{x,s},\beta_{y,s}$ & position of the source centre & draggable / sliders \\
+$R_S$ & source half-light radius & slider \\
+$n$ & source S\'ersic index & fixed 1.5 \\
+$q_S$ & source axis ratio & fixed 0.58 in P1; slider in P2 \\
+$q_L$ & lens axis ratio & 1 in P1; slider in P2 \\
+$\gamma_1,\gamma_2$ & external shear & 0 in P1; sliders in P2 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Not included}
+The current playgrounds do not include lens or source position angles, the light of the lens galaxy, multiple lens planes, line-of-sight structure, PSF convolution, detector noise, pixels, substructure, or time delays.
+
+\section{Summary}
+Playground 1 shows the geometry of a circular lens: the Einstein radius, set by the mass and the distances, controls the characteristic image scale, while source offset controls the transition from configurations close to a ring to asymmetric arcs/images. Playground 2 breaks rotational symmetry through $q_L$ and the external shear and independently varies the intrinsic source shape through $q_S$. Playground 2 extends Playground 1.
+
+\begin{thebibliography}{1}
+\bibitem{keeton1998} C.~R. Keeton and C.~S. Kochanek, \emph{Gravitational lensing by spiral galaxies},
+ApJ 495, 157 (1998).
+\end{thebibliography}
+
+\end{document}
