@@ -12,8 +12,8 @@ light bend into arcs or a ring.
 
 ## Model
 
-The lens and source are the model of the simulated benchmark of
-[EUCLID-SAGE](https://github.com/singularity4/EUCLID-SAGE), using lenstronomy 1.14 conventions:
+LensPlayground uses the same lens and source models as the
+[EUCLID-SAGE](https://github.com/singularity4/EUCLID-SAGE) simulations, using lenstronomy 1.14 parameters and conventions:
 
 - **Lens mass:** SIE (lenstronomy `SIE`) with external shear (`SHEAR`); the circular page is the SIS.
 - **Source light:** elliptical Sérsic profile (`SERSIC_ELLIPSE`), Sérsic index 1.5.
