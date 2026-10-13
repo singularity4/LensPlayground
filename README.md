@@ -15,13 +15,11 @@ light bend into arcs or a ring.
 LensPlayground uses the same lens and source models as the
 [EUCLID-SAGE](https://github.com/singularity4/EUCLID-SAGE) simulations, using lenstronomy 1.14 parameters and conventions:
 
-- **Lens mass:** SIE with external shear (eliptical); the SIS (circular). 
+- **Lens mass:** SIE with external shear (eliptical); the SIS model (circular). 
 - **Source light:** elliptical Sérsic profile (`SERSIC_ELLIPSE`), Sérsic index 1.5.
 - **Einstein radius:** θ_E = 4π (σ/c)² D_LS / D_S from the velocity dispersion σ of the lens galaxy and the
-  redshifts of lens and source, in a flat ΛCDM universe (H0 = 70 km/s/Mpc, Ωm = 0.3). The pages also show the
+  redshifts of lens and source, in a flat ΛCDM universe (H0 = 70 km/s/Mpc, Ωm = 0.3). The simulations also show the
   mass inside the Einstein radius.
-- **Critical curve and caustic:** det A = 0, found along rays from the lens centre and mapped through the lens
-  equation; the cut of the singular isothermal lens is drawn in the source plane.
 
 All angles are in arcseconds. Equations and conventions: [`docs/lens_playground_models.pdf`](docs/lens_playground_models.pdf).
 
