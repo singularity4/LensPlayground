@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LensPlayground</title>
+<meta name="description" content="Gravitational lensing in the browser: move a lens galaxy and see the light of background galaxies bend into arcs, rings and multiple images.">
+<link rel="stylesheet" href="playground.css">
+</head>
+<body>
+<header class="sky">
+  <canvas id="sky" aria-label="Background galaxies lensed by a foreground galaxy that follows the pointer"></canvas>
+  <div class="title">
+    <h1>LensPlayground</h1>
+    <p>Move the pointer across the sky. The gold galaxy bends the light of the galaxies behind it.</p>
+  </div>
+</header>
+
+<main class="home-content">
+  <p class="intro">A massive galaxy bends the light of galaxies far behind it into arcs, rings and multiple images.
+    Move the lens and the background galaxy and see the light bend.</p>
+
+  <a class="lens-link" href="circular.html">
+    <canvas id="circularExample" width="400" height="250" aria-hidden="true"></canvas>
+    <div><h2>Circular lens</h2><p>A round lens galaxy. Move the background galaxy and a ring splits into two arcs.</p></div>
+  </a>
+  <a class="lens-link" href="elliptical.html">
+    <canvas id="ellipticalExample" width="400" height="250" aria-hidden="true"></canvas>
+    <div><h2>Elliptical lens</h2><p>An elongated lens galaxy pulled by its neighbours. One background galaxy becomes four images.</p></div>
+  </a>
+
+  <p class="model">The lens and the galaxies follow the model of the simulated images of EUCLID-SAGE, a benchmark for
+    finding strong lenses in <i>Euclid</i> images: an isothermal lens with external shear and Sérsic galaxies, using
+    lenstronomy conventions. The Einstein radius follows from the velocity dispersion of the lens galaxy and the
+    distances.</p>
+</main>
+
+<footer>
+  LensPlayground is part of EUCLID-SAGE.
+  <nav>
+    <a href="https://github.com/singularity4/EUCLID-SAGE">EUCLID-SAGE</a>
+    <a href="docs/lens_playground_models.pdf">Model note (PDF)</a>
+    <a href="https://github.com/singularity4/LensPlayground">Code on GitHub</a>
+  </nav>
+</footer>
+
+<script src="lensmodel.js"></script>
+<script src="hero.js"></script>
+<script>
+(() => {
+  'use strict';
+  const { Hero, LensModel } = window;
+  Hero.startHero(document.getElementById('sky'));
+
+  // Circular lens: a galaxy off the axis gives an arc and a counter-image.
+  Hero.drawExample(document.getElementById('circularExample'),
+    {einsteinRadius: 1.15, e1: 0, e2: 0, shear1: 0, shear2: 0},
+    {centreX: 0.32, centreY: 0.18, halfLightRadius: 0.2, axisRatio: 0.7, angle: 0.3});
+
+  // Elliptical lens: a compact galaxy inside the caustic gives four images.
+  const [lensE1, lensE2] = LensModel.angleAndRatioToEllipticity(0, 0.62);
+  Hero.drawExample(document.getElementById('ellipticalExample'),
+    {einsteinRadius: 1.15, e1: lensE1, e2: lensE2, shear1: 0.03, shear2: 0},
+    {centreX: 0.1, centreY: 0.06, halfLightRadius: 0.025, axisRatio: 0.9, angle: 0.5, brightness: 2.5});
+})();
+</script>
+</body>
+</html>
