@@ -1,0 +1,147 @@
+/*
+ * playground.css - typeface, colours and layout of the LensPlayground pages, in light and dark mode.
+ * Colours: night blue of the sky, blue of the lensed light, gold of the lens galaxy.
+ */
+
+@font-face {
+  font-family: 'Atkinson Hyperlegible';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/atkinson-hyperlegible-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Atkinson Hyperlegible';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('fonts/atkinson-hyperlegible-latin-700-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Atkinson Hyperlegible';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/atkinson-hyperlegible-latin-400-italic.woff2') format('woff2');
+}
+
+:root {
+  --paper: #f4f7fb;
+  --surface: #ffffff;
+  --ink: #13202f;
+  --muted: #566377;
+  --rule: #d6dde7;
+  --accent: #1b6a99;
+  --sky: #060a14;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #0a101b;
+    --surface: #0f1726;
+    --ink: #e7eef6;
+    --muted: #97a5b7;
+    --rule: #243245;
+    --accent: #8fd0f0;
+  }
+}
+
+* { box-sizing: border-box; }
+
+html {
+  font-family: 'Atkinson Hyperlegible', system-ui, sans-serif;
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+body { margin: 0; background: var(--paper); color: var(--ink); }
+a { color: var(--accent); text-underline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
+
+footer { max-width: 1140px; margin: 0 auto; padding: 0 16px 40px; color: var(--muted); font-size: .88rem; }
+footer nav { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 4px; }
+
+/* ------------------------------------------------------------------------------------------- start page */
+
+.sky { position: relative; background: var(--sky); }
+.sky canvas { display: block; width: 100%; height: min(62vh, 560px); min-height: 320px; cursor: crosshair; touch-action: none; }
+.sky .title { position: absolute; left: max(16px, calc((100% - 760px) / 2)); right: 16px; bottom: 28px; color: #eef4fb; pointer-events: none; }
+.sky h1 { margin: 0; font-size: 3rem; line-height: 1.05; font-weight: 700; letter-spacing: -0.01em; }
+.sky .title p { margin: .4rem 0 0; color: #b9c7d8; max-width: 34em; }
+
+.home-content { max-width: 760px; margin: 0 auto; padding: 40px 16px 24px; }
+.home-content + footer { max-width: 760px; }
+.intro { font-size: 1.2rem; margin: 0 0 32px; max-width: 36em; }
+
+.lens-link {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 20px;
+  align-items: center;
+  padding: 18px 0;
+  border-top: 1px solid var(--rule);
+  color: inherit;
+  text-decoration: none;
+}
+.lens-link:last-of-type { border-bottom: 1px solid var(--rule); }
+.lens-link canvas { width: 200px; height: 125px; border-radius: 6px; display: block; background: var(--sky); }
+.lens-link h2 { margin: 0 0 .2rem; font-size: 1.25rem; color: var(--accent); }
+.lens-link p { margin: 0; color: var(--muted); }
+.lens-link:hover h2, .lens-link:focus-visible h2 { text-decoration: underline; text-underline-offset: 3px; }
+.lens-link:focus-visible { outline-offset: 4px; }
+
+.model { margin: 32px 0 0; color: var(--muted); font-size: .95rem; max-width: 40em; }
+
+@media (max-width: 560px) {
+  .sky h1 { font-size: 2.2rem; }
+  .lens-link { grid-template-columns: 120px 1fr; gap: 14px; }
+  .lens-link canvas { width: 120px; height: 75px; }
+}
+
+/* -------------------------------------------------------------------------------------------- lens pages */
+
+.top { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 28px; max-width: 1140px; margin: 0 auto; padding: 18px 16px 10px; }
+.top .home { font-weight: 700; color: var(--ink); text-decoration: none; font-size: 1.15rem; }
+.top nav { display: flex; gap: 22px; }
+.top nav a { color: var(--muted); text-decoration: none; padding-bottom: 3px; border-bottom: 2px solid transparent; }
+.top nav a[aria-current] { color: var(--ink); border-bottom-color: var(--accent); }
+.top nav a:hover { color: var(--ink); }
+
+.layout { display: grid; gap: 28px; align-items: start; max-width: 1140px; margin: 0 auto; padding: 8px 16px 40px; }
+@media (min-width: 860px) {
+  .layout { grid-template-columns: minmax(0, 1.55fr) minmax(280px, 1fr); }
+}
+
+.picture svg { display: block; width: 100%; height: auto; border-radius: 10px; background: var(--sky); }
+.picture .hint { margin: 8px 2px 0; color: var(--muted); font-size: .9rem; }
+
+.readout { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px 24px; margin: 22px 0 0; }
+.readout div { border-top: 1px solid var(--rule); padding-top: 8px; }
+.readout dt { color: var(--muted); font-size: .85rem; }
+.readout dd { margin: 2px 0 0; font-size: 1.25rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+.verdict { margin: 22px 0 0; }
+.verdict strong { display: block; font-size: 1.1rem; }
+.verdict span { color: var(--muted); }
+
+.controls h2 { font-size: 1rem; margin: 0 0 6px; }
+.controls section + section { margin-top: 26px; }
+.control { padding: 8px 0; }
+.control label { display: block; font-size: .95rem; }
+.control input { width: 100%; margin: 6px 0 2px; accent-color: var(--accent); }
+.scale { display: flex; justify-content: space-between; font-size: .85rem; color: var(--muted); }
+.scale output { color: var(--ink); font-weight: 700; font-variant-numeric: tabular-nums; }
+
+.reset {
+  margin-top: 18px;
+  font: inherit;
+  font-size: .95rem;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 7px 14px;
+  cursor: pointer;
+}
+
+.note { grid-column: 1 / -1; max-width: 46em; color: var(--muted); font-size: .92rem; margin: 0; }
