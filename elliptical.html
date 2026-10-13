@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LensPlayground: elliptical lens</title>
+<link rel="stylesheet" href="playground.css">
+</head>
+<body>
+<header class="top">
+  <a class="home" href="index.html">LensPlayground</a>
+  <nav><a href="circular.html">Circular lens</a><a href="elliptical.html" aria-current="page">Elliptical lens</a></nav>
+</header>
+
+<div id="playground" class="layout">
+  <div class="picture">
+    <svg id="view" viewBox="0 0 620 500" role="img" aria-label="Lensed image of a background galaxy behind an elliptical lens">
+            <defs>
+              <radialGradient id="galaxyGlow">
+                <stop offset="0" stop-color="#f4e4b2" stop-opacity=".95"/>
+                <stop offset=".3" stop-color="#d6b779" stop-opacity=".55"/>
+                <stop offset="1" stop-color="#77623f" stop-opacity="0"/>
+              </radialGradient>
+              <clipPath id="insetClip"><rect width="144" height="144" rx="10"/></clipPath>
+            </defs>
+            <rect width="620" height="500" fill="#07090e"/>
+            <g id="stars"></g>
+            <g id="lensedSource"></g>
+            <path id="criticalCurve" fill="none" stroke="#e7a8ff" stroke-width="1.2" stroke-opacity=".62" stroke-dasharray="4 4"/>
+            <!-- lens galaxy: decoration only, not part of the lens model -->
+            <circle cx="310" cy="250" r="82" fill="url(#galaxyGlow)"/>
+            <ellipse id="lensGalaxy" cx="310" cy="250" rx="27" ry="22" fill="#e8d5a7" opacity=".78"/>
+            <circle cx="310" cy="250" r="3" fill="#fff4cf"/>
+            <g transform="translate(458 18)">
+              <rect width="144" height="144" rx="10" fill="#10141d" stroke="#3f4653"/>
+              <g clip-path="url(#insetClip)">
+                <text x="10" y="18" fill="#c9ced8" font-size="11">Source plane</text>
+                <line x1="72" y1="28" x2="72" y2="130" stroke="#414958" stroke-width=".7"/>
+                <line x1="20" y1="78" x2="124" y2="78" stroke="#414958" stroke-width=".7"/>
+                <circle cx="72" cy="78" r="3" fill="#9098a8"/>
+                <path id="cutCurve" fill="none" stroke="#e7a8ff" stroke-width="1" stroke-opacity=".7" stroke-dasharray="3 4"/>
+                <path id="causticCurve" fill="none" stroke="#e7a8ff" stroke-width="1.25"/>
+                <ellipse id="sourceMarker" cx="75" cy="78" rx="9" ry="5.22" fill="#6fb6d9" stroke="#d5f1ff" stroke-width="1.5" style="cursor:grab;touch-action:none"/>
+              </g>
+              <text x="119" y="74" fill="#747e8f" font-size="9">+βx</text>
+              <text x="76" y="32" fill="#747e8f" font-size="9">+βy</text>
+            </g>
+            <text x="14" y="486" fill="#858d9c" font-size="11">Singular isothermal ellipsoid with external shear. Purple: critical curve and caustic.</text>
+          </svg>
+    <p class="hint">Drag the blue galaxy in the small box, or use the sliders.</p>
+    <dl class="readout">
+      <div><dt>Einstein radius θ<sub>E</sub></dt><dd id="einsteinRadiusText"></dd></div>
+      <div><dt>Mass inside θ<sub>E</sub></dt><dd id="einsteinMassText"></dd></div>
+      <div><dt>Source position β</dt><dd id="sourcePositionText"></dd></div>
+      <div><dt>Distance from the axis |β|</dt><dd id="sourceOffsetText"></dd></div>
+    </dl>
+    <p class="verdict"><strong id="morphology"></strong><span id="explanation"></span></p>
+  </div>
+
+  <div class="controls">
+    <section>
+      <h2>Lens galaxy</h2>
+      <div class="control">
+        <label for="velocityDispersion">Mass: velocity dispersion σ</label>
+        <input id="velocityDispersion" type="range" min="150" max="300" value="250" step="1">
+        <div class="scale"><span>lighter</span><output id="velocityDispersionValue" for="velocityDispersion"></output><span>heavier</span></div>
+      </div>
+      <div class="control">
+        <label for="lensRedshift">Distance: redshift z<sub>L</sub></label>
+        <input id="lensRedshift" type="range" min="0.1" max="1.2" value="0.5" step="0.01">
+        <div class="scale"><span>near</span><output id="lensRedshiftValue" for="lensRedshift"></output><span>farther</span></div>
+      </div>
+      <div class="control">
+        <label for="lensAxisRatio">Axis ratio q<sub>L</sub></label>
+        <input id="lensAxisRatio" type="range" min="0.4" max="1" value="0.78" step="0.01">
+        <div class="scale"><span>elliptical</span><output id="lensAxisRatioValue" for="lensAxisRatio"></output><span>round</span></div>
+      </div>
+      <div class="control">
+        <label for="shear1">External shear γ<sub>1</sub></label>
+        <input id="shear1" type="range" min="-0.1" max="0.1" value="0" step="0.005">
+        <div class="scale"><span>−0.1</span><output id="shear1Value" for="shear1"></output><span>+0.1</span></div>
+      </div>
+      <div class="control">
+        <label for="shear2">External shear γ<sub>2</sub></label>
+        <input id="shear2" type="range" min="-0.1" max="0.1" value="0" step="0.005">
+        <div class="scale"><span>−0.1</span><output id="shear2Value" for="shear2"></output><span>+0.1</span></div>
+      </div>
+    </section>
+    <section>
+      <h2>Background galaxy</h2>
+      <div class="control">
+        <label for="sourceRedshift">Distance: redshift z<sub>S</sub></label>
+        <input id="sourceRedshift" type="range" min="0.2" max="4" value="2" step="0.01">
+        <div class="scale"><span>near</span><output id="sourceRedshiftValue" for="sourceRedshift"></output><span>farther</span></div>
+      </div>
+      <div class="control">
+        <label for="sourceX">Horizontal position βx</label>
+        <input id="sourceX" type="range" min="-1.5" max="1.5" value="0.08" step="0.01">
+        <div class="scale"><span>left</span><output id="sourceXValue" for="sourceX"></output><span>right</span></div>
+      </div>
+      <div class="control">
+        <label for="sourceY">Vertical position βy</label>
+        <input id="sourceY" type="range" min="-1.5" max="1.5" value="0" step="0.01">
+        <div class="scale"><span>down</span><output id="sourceYValue" for="sourceY"></output><span>up</span></div>
+      </div>
+      <div class="control">
+        <label for="sourceRadius">Size: half-light radius</label>
+        <input id="sourceRadius" type="range" min="0.05" max="0.6" value="0.2" step="0.01">
+        <div class="scale"><span>compact</span><output id="sourceRadiusValue" for="sourceRadius"></output><span>extended</span></div>
+      </div>
+      <div class="control">
+        <label for="sourceAxisRatio">Axis ratio q<sub>S</sub></label>
+        <input id="sourceAxisRatio" type="range" min="0.25" max="1" value="0.58" step="0.01">
+        <div class="scale"><span>elliptical</span><output id="sourceAxisRatioValue" for="sourceAxisRatio"></output><span>round</span></div>
+      </div>
+    </section>
+    <button id="reset" type="button" class="reset">Reset</button>
+  </div>
+
+  <p class="note">The lens is a singular isothermal ellipsoid with external shear, the lens of the EUCLID-SAGE
+    simulations, using lenstronomy conventions (θ<sub>E</sub> is the geometric mean of the Einstein radii along the
+    major and minor axes). The dashed purple curve in the picture is the critical curve, det A = 0. In the box, the
+    solid curve is the caustic and the dashed curve the cut: a background galaxy outside the cut has no image near the
+    lens centre. Equations: <a href="docs/lens_playground_models.pdf">model note</a>.</p>
+</div>
+
+<footer>
+  LensPlayground is part of EUCLID-SAGE.
+  <nav>
+    <a href="index.html">All lenses</a>
+    <a href="https://github.com/singularity4/EUCLID-SAGE">EUCLID-SAGE</a>
+    <a href="https://github.com/singularity4/LensPlayground">Code on GitHub</a>
+  </nav>
+</footer>
+
+<script src="lensmodel.js"></script>
+<script src="playground.js"></script>
+<script>
+(() => {
+  'use strict';
+  const { LensModel, Playground } = window;
+  const element = id => document.getElementById(id);
+
+  const CURVE_RAYS = 240;                  // rays used to find the critical curve, caustic and cut
+  const DEFAULTS = {velocityDispersion: 250, lensRedshift: 0.5, sourceRedshift: 2, sourceX: 0.08, sourceY: 0, sourceRadius: 0.2,
+                    lensAxisRatio: 0.78, shear1: 0, shear2: 0, sourceAxisRatio: 0.58};
+  const sliders = Object.fromEntries(Object.keys(DEFAULTS).map(id => [id, element(id)]));
+
+  /** Name and short explanation of the configuration. */
+  function describeImages(lensAxisRatio, shear, offset, einsteinRadius) {
+    if (lensAxisRatio > 0.97 && shear < 0.005) return ['Nearly circular lens', 'As qL → 1 without shear, the astroid caustic collapses toward the circular SIS limit.'];
+    if (offset < 0.1 * einsteinRadius) return ['Source near central caustic', 'Move the source across the purple caustic and watch the image multiplicity and arc geometry change.'];
+    return ['Elliptical lens mapping', 'qL and the shear change the gravitational mapping; qS changes the intrinsic source shape.'];
+  }
+
+  function update() {
+    Playground.keepSourceBehindLens(sliders.lensRedshift, sliders.sourceRedshift);
+    const velocityDispersion = +sliders.velocityDispersion.value;
+    const lensRedshift = +sliders.lensRedshift.value;
+    const sourceRedshift = +sliders.sourceRedshift.value;
+    const lensAxisRatio = +sliders.lensAxisRatio.value;
+    const sourceAxisRatio = +sliders.sourceAxisRatio.value;
+    const einsteinRadius = LensModel.einsteinRadius(velocityDispersion, lensRedshift, sourceRedshift);
+    // Lens and source are aligned with the axes (orientation angle 0).
+    const [lensE1, lensE2] = LensModel.angleAndRatioToEllipticity(0, lensAxisRatio);
+    const [sourceE1, sourceE2] = LensModel.angleAndRatioToEllipticity(0, sourceAxisRatio);
+    const lens = {einsteinRadius, e1: lensE1, e2: lensE2, shear1: +sliders.shear1.value, shear2: +sliders.shear2.value};
+    const source = {centreX: +sliders.sourceX.value, centreY: +sliders.sourceY.value, halfLightRadius: +sliders.sourceRadius.value,
+                    sersicIndex: Playground.SOURCE_SERSIC_INDEX, e1: sourceE1, e2: sourceE2};
+    const offset = Math.hypot(source.centreX, source.centreY);
+
+    element('velocityDispersionValue').textContent = velocityDispersion.toFixed(0) + ' km/s';
+    element('lensRedshiftValue').textContent = lensRedshift.toFixed(2);
+    element('sourceRedshiftValue').textContent = sourceRedshift.toFixed(2);
+    element('sourceXValue').textContent = Playground.formatAngle(source.centreX);
+    element('sourceYValue').textContent = Playground.formatAngle(source.centreY);
+    element('sourceRadiusValue').textContent = source.halfLightRadius.toFixed(2) + '″';
+    element('lensAxisRatioValue').textContent = lensAxisRatio.toFixed(2);
+    element('shear1Value').textContent = lens.shear1.toFixed(3);
+    element('shear2Value').textContent = lens.shear2.toFixed(3);
+    element('sourceAxisRatioValue').textContent = sourceAxisRatio.toFixed(2);
+    element('sourcePositionText').textContent = '(' + Playground.formatAngle(source.centreX) + ', ' + Playground.formatAngle(source.centreY) + ')';
+    element('sourceOffsetText').textContent = offset.toFixed(2) + '″';
+    element('einsteinRadiusText').textContent = einsteinRadius.toFixed(2) + '″';
+    element('einsteinMassText').textContent = Playground.formatMass(LensModel.massInsideEinsteinRadius(einsteinRadius, lensRedshift, sourceRedshift));
+
+    element('criticalCurve').setAttribute('d', Playground.imagePlanePath(LensModel.criticalCurve(lens, CURVE_RAYS)));
+    element('causticCurve').setAttribute('d', Playground.sourcePlanePath(LensModel.caustic(lens, CURVE_RAYS)));
+    element('cutCurve').setAttribute('d', Playground.sourcePlanePath(LensModel.cut(lens, CURVE_RAYS)));
+    element('lensGalaxy').setAttribute('ry', 27 * lensAxisRatio);
+    Playground.placeSourceMarker(element('sourceMarker'), source, sourceAxisRatio);
+    Playground.drawLensedSource(element('lensedSource'), lens, source);
+
+    const [name, explanation] = describeImages(lensAxisRatio, Math.hypot(lens.shear1, lens.shear2), offset, einsteinRadius);
+    element('morphology').textContent = name;
+    element('explanation').textContent = explanation;
+  }
+
+  Object.values(sliders).forEach(slider => slider.addEventListener('input', update));
+  element('reset').addEventListener('click', () => {
+    for (const [id, value] of Object.entries(DEFAULTS)) sliders[id].value = value;
+    update();
+  });
+  Playground.drawStars(element('stars'));
+  Playground.enableSourceDragging(element('view'), element('sourceMarker'), sliders.sourceX, sliders.sourceY, update);
+  update();
+})();
+</script>
+</body>
+</html>
