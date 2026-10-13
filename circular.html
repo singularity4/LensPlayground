@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LensPlayground: circular lens</title>
+<link rel="stylesheet" href="playground.css">
+</head>
+<body>
+<header class="top">
+  <a class="home" href="index.html">LensPlayground</a>
+  <nav><a href="circular.html" aria-current="page">Circular lens</a><a href="elliptical.html">Elliptical lens</a></nav>
+</header>
+
+<div id="playground" class="layout">
+  <div class="picture">
+    <svg id="view" viewBox="0 0 620 500" role="img" aria-label="Lensed image of a background galaxy behind a circular lens">
+            <defs>
+              <radialGradient id="galaxyGlow">
+                <stop offset="0" stop-color="#f4e4b2" stop-opacity=".95"/>
+                <stop offset=".3" stop-color="#d6b779" stop-opacity=".55"/>
+                <stop offset="1" stop-color="#77623f" stop-opacity="0"/>
+              </radialGradient>
+              <clipPath id="insetClip"><rect width="144" height="144" rx="10"/></clipPath>
+            </defs>
+            <rect width="620" height="500" fill="#07090e"/>
+            <g id="stars"></g>
+            <g id="lensedSource"></g>
+            <circle id="einsteinRing" cx="310" cy="250" r="70" fill="none" stroke="#e7a8ff" stroke-width="1.2" stroke-opacity=".55" stroke-dasharray="4 4"/>
+            <!-- lens galaxy: decoration only, not part of the lens model -->
+            <circle cx="310" cy="250" r="82" fill="url(#galaxyGlow)"/>
+            <ellipse cx="310" cy="250" rx="27" ry="22" fill="#e8d5a7" opacity=".78"/>
+            <circle cx="310" cy="250" r="3" fill="#fff4cf"/>
+            <g transform="translate(458 18)">
+              <rect width="144" height="144" rx="10" fill="#10141d" stroke="#3f4653"/>
+              <g clip-path="url(#insetClip)">
+                <text x="10" y="18" fill="#c9ced8" font-size="11">Source plane</text>
+                <line x1="72" y1="28" x2="72" y2="130" stroke="#414958" stroke-width=".7"/>
+                <line x1="20" y1="78" x2="124" y2="78" stroke="#414958" stroke-width=".7"/>
+                <circle cx="72" cy="78" r="3" fill="#9098a8"/>
+                <circle id="cutCircle" cx="72" cy="78" r="30" fill="none" stroke="#e7a8ff" stroke-width="1.1" stroke-dasharray="3 4"/>
+                <ellipse id="sourceMarker" cx="75" cy="78" rx="9" ry="6" fill="#6fb6d9" stroke="#d5f1ff" stroke-width="1.5" style="cursor:grab;touch-action:none"/>
+              </g>
+              <text x="119" y="74" fill="#747e8f" font-size="9">+βx</text>
+              <text x="76" y="32" fill="#747e8f" font-size="9">+βy</text>
+            </g>
+            <text x="14" y="486" fill="#858d9c" font-size="11">Singular isothermal sphere. Dashed: the Einstein ring and, in the box, the cut. Angles in arcseconds.</text>
+          </svg>
+    <p class="hint">Drag the blue galaxy in the small box, or use the sliders.</p>
+    <dl class="readout">
+      <div><dt>Einstein radius θ<sub>E</sub></dt><dd id="einsteinRadiusText"></dd></div>
+      <div><dt>Mass inside θ<sub>E</sub></dt><dd id="einsteinMassText"></dd></div>
+      <div><dt>Source position β</dt><dd id="sourcePositionText"></dd></div>
+      <div><dt>Distance from the axis |β|</dt><dd id="sourceOffsetText"></dd></div>
+    </dl>
+    <p class="verdict"><strong id="morphology"></strong><span id="explanation"></span></p>
+  </div>
+
+  <div class="controls">
+    <section>
+      <h2>Lens galaxy</h2>
+      <div class="control">
+        <label for="velocityDispersion">Mass: velocity dispersion σ</label>
+        <input id="velocityDispersion" type="range" min="150" max="300" value="250" step="1">
+        <div class="scale"><span>lighter</span><output id="velocityDispersionValue" for="velocityDispersion"></output><span>heavier</span></div>
+      </div>
+      <div class="control">
+        <label for="lensRedshift">Distance: redshift z<sub>L</sub></label>
+        <input id="lensRedshift" type="range" min="0.1" max="1.2" value="0.5" step="0.01">
+        <div class="scale"><span>near</span><output id="lensRedshiftValue" for="lensRedshift"></output><span>farther</span></div>
+      </div>
+    </section>
+    <section>
+      <h2>Background galaxy</h2>
+      <div class="control">
+        <label for="sourceRedshift">Distance: redshift z<sub>S</sub></label>
+        <input id="sourceRedshift" type="range" min="0.2" max="4" value="2" step="0.01">
+        <div class="scale"><span>near</span><output id="sourceRedshiftValue" for="sourceRedshift"></output><span>farther</span></div>
+      </div>
+      <div class="control">
+        <label for="sourceX">Horizontal position βx</label>
+        <input id="sourceX" type="range" min="-1.5" max="1.5" value="0.08" step="0.01">
+        <div class="scale"><span>left</span><output id="sourceXValue" for="sourceX"></output><span>right</span></div>
+      </div>
+      <div class="control">
+        <label for="sourceY">Vertical position βy</label>
+        <input id="sourceY" type="range" min="-1.5" max="1.5" value="0" step="0.01">
+        <div class="scale"><span>down</span><output id="sourceYValue" for="sourceY"></output><span>up</span></div>
+      </div>
+      <div class="control">
+        <label for="sourceRadius">Size: half-light radius</label>
+        <input id="sourceRadius" type="range" min="0.05" max="0.6" value="0.2" step="0.01">
+        <div class="scale"><span>compact</span><output id="sourceRadiusValue" for="sourceRadius"></output><span>extended</span></div>
+      </div>
+    </section>
+    <button id="reset" type="button" class="reset">Reset</button>
+  </div>
+
+  <p class="note">The lens is a singular isothermal sphere. Because it is circularly symmetric, equal offsets in
+    different directions give rotated versions of the same picture. A background galaxy inside the dashed circle of
+    the box (|β| &lt; θ<sub>E</sub>) has two images; outside it, one. The Einstein radius is
+    θ<sub>E</sub> = 4π(σ/c)² D<sub>LS</sub>/D<sub>S</sub>, with distances for a flat universe with
+    H<sub>0</sub> = 70 km/s/Mpc and Ω<sub>m</sub> = 0.3. An elliptical lens breaks the symmetry: see the
+    <a href="elliptical.html">elliptical lens</a>. Equations: <a href="docs/lens_playground_models.pdf">model note</a>.</p>
+</div>
+
+<footer>
+  LensPlayground is part of EUCLID-SAGE.
+  <nav>
+    <a href="index.html">All lenses</a>
+    <a href="https://github.com/singularity4/EUCLID-SAGE">EUCLID-SAGE</a>
+    <a href="https://github.com/singularity4/LensPlayground">Code on GitHub</a>
+  </nav>
+</footer>
+
+<script src="lensmodel.js"></script>
+<script src="playground.js"></script>
+<script>
+(() => {
+  'use strict';
+  const { LensModel, Playground } = window;
+  const element = id => document.getElementById(id);
+
+  const SOURCE_AXIS_RATIO = 0.58;          // fixed axis ratio of the source on this page
+  const [sourceE1, sourceE2] = LensModel.angleAndRatioToEllipticity(0, SOURCE_AXIS_RATIO);
+  const DEFAULTS = {velocityDispersion: 250, lensRedshift: 0.5, sourceRedshift: 2, sourceX: 0.08, sourceY: 0, sourceRadius: 0.2};
+  const sliders = Object.fromEntries(Object.keys(DEFAULTS).map(id => [id, element(id)]));
+
+  /** Name and short explanation of the image configuration, from the source offset relative to the ring. */
+  function describeImages(offset, einsteinRadius, halfLightRadius) {
+    const relativeOffset = offset / (einsteinRadius + halfLightRadius);
+    if (relativeOffset < 0.12) return ['Nearly complete Einstein ring', 'Excellent alignment maps the extended source around almost the full Einstein radius.'];
+    if (relativeOffset < 0.45) return ['Partial ring / bright arcs', 'Moving the source away from the optical axis breaks the symmetric ring into arcs.'];
+    if (relativeOffset < 0.9) return ['Asymmetric arc pair', 'The source is substantially off-axis. One image becomes dominant while a counterimage remains.'];
+    return ['Weakly separated lens images', 'At large source offset the dramatic ring geometry disappears and the images become strongly asymmetric.'];
+  }
+
+  function update() {
+    Playground.keepSourceBehindLens(sliders.lensRedshift, sliders.sourceRedshift);
+    const velocityDispersion = +sliders.velocityDispersion.value;
+    const lensRedshift = +sliders.lensRedshift.value;
+    const sourceRedshift = +sliders.sourceRedshift.value;
+    const einsteinRadius = LensModel.einsteinRadius(velocityDispersion, lensRedshift, sourceRedshift);
+    const lens = {einsteinRadius, e1: 0, e2: 0, shear1: 0, shear2: 0};
+    const source = {centreX: +sliders.sourceX.value, centreY: +sliders.sourceY.value, halfLightRadius: +sliders.sourceRadius.value,
+                    sersicIndex: Playground.SOURCE_SERSIC_INDEX, e1: sourceE1, e2: sourceE2};
+    const offset = Math.hypot(source.centreX, source.centreY);
+
+    element('velocityDispersionValue').textContent = velocityDispersion.toFixed(0) + ' km/s';
+    element('lensRedshiftValue').textContent = lensRedshift.toFixed(2);
+    element('sourceRedshiftValue').textContent = sourceRedshift.toFixed(2);
+    element('sourceXValue').textContent = Playground.formatAngle(source.centreX);
+    element('sourceYValue').textContent = Playground.formatAngle(source.centreY);
+    element('sourceRadiusValue').textContent = source.halfLightRadius.toFixed(2) + '″';
+    element('sourcePositionText').textContent = '(' + Playground.formatAngle(source.centreX) + ', ' + Playground.formatAngle(source.centreY) + ')';
+    element('sourceOffsetText').textContent = offset.toFixed(2) + '″';
+    element('einsteinRadiusText').textContent = einsteinRadius.toFixed(2) + '″';
+    element('einsteinMassText').textContent = Playground.formatMass(LensModel.massInsideEinsteinRadius(einsteinRadius, lensRedshift, sourceRedshift));
+
+    // For the SIS the tangential critical curve is the Einstein ring, and the cut is the circle |beta| = theta_E.
+    element('einsteinRing').setAttribute('r', Playground.imagePlaneLength(einsteinRadius));
+    element('cutCircle').setAttribute('r', Playground.sourcePlaneLength(einsteinRadius));
+    Playground.placeSourceMarker(element('sourceMarker'), source, SOURCE_AXIS_RATIO);
+    Playground.drawLensedSource(element('lensedSource'), lens, source);
+
+    const [name, explanation] = describeImages(offset, einsteinRadius, source.halfLightRadius);
+    element('morphology').textContent = name;
+    element('explanation').textContent = explanation;
+  }
+
+  Object.values(sliders).forEach(slider => slider.addEventListener('input', update));
+  element('reset').addEventListener('click', () => {
+    for (const [id, value] of Object.entries(DEFAULTS)) sliders[id].value = value;
+    update();
+  });
+  Playground.drawStars(element('stars'));
+  Playground.enableSourceDragging(element('view'), element('sourceMarker'), sliders.sourceX, sliders.sourceY, update);
+  update();
+})();
+</script>
+</body>
+</html>
