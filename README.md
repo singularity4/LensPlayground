@@ -20,6 +20,10 @@ LensPlayground uses the same lens and source models as the
 - **Einstein radius:** θ_E = 4π (σ/c)² D_LS / D_S from the velocity dispersion σ of the lens galaxy and the
   redshifts of lens and source, in a flat ΛCDM universe (H0 = 70 km/s/Mpc, Ωm = 0.3). The simulations also show the
   mass inside the Einstein radius.
+- **Critical curve and caustic:** the critical curve is where det A = 0, found by bisection along rays from the lens
+  centre. The caustic is the critical curve mapped to the source plane by the lens equation. The source plane also
+  shows the cut of the singular isothermal lens.
+
 
 All angles are in arcseconds. Equations and conventions: [`docs/lens_playground_models.pdf`](docs/lens_playground_models.pdf).
 
